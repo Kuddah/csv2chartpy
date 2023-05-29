@@ -52,7 +52,7 @@ if uploaded_file is not None:
 
             # Create a selectbox for the chart type
             with cols[3]:
-                chart_type = st.selectbox(f'Select chart type for Chart {i+1}:', ['Line', 'Scatter', 'Step', 'Area'])
+                chart_type = st.selectbox(f'Select chart type for Chart {i+1}:', ['Line', 'Scatter', 'Area'])
 
             # Create line chart using Plotly Graph Objects
             fig = go.Figure()
@@ -61,8 +61,6 @@ if uploaded_file is not None:
                 color = color_palette[j % len(color_palette)]
                 if chart_type == 'Scatter':
                     fig.add_trace(go.Scatter(x=df[x_column], y=df[y_column], mode='markers', name=y_column, yaxis=f'y{j+1}', marker=dict(color=color)))
-                elif chart_type == 'Step':
-                    fig.add_trace(go.Scatter(x=df[x_column], y=df[y_column], mode='lines+steps', name=y_column, yaxis=f'y{j+1}', line=dict(color=color)))
                 elif chart_type == 'Area':
                     fig.add_trace(go.Scatter(x=df[x_column], y=df[y_column], mode='lines', fill='tozeroy', name=y_column, yaxis=f'y{j+1}', line=dict(color=color)))
                 else:
