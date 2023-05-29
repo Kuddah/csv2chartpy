@@ -33,7 +33,7 @@ if uploaded_file is not None:
         x_column = None
         for i in range(num_charts):
             st.subheader(f'Chart {i+1}')
-            cols = st.columns(4)
+            cols = st.beta_columns(4)
 
             # Create an input field for the chart name
             with cols[0]:
@@ -46,25 +46,24 @@ if uploaded_file is not None:
             # Create a selectbox or multiselect for the Y column(s)
             with cols[2]:
                 if page == "Single Y-axis":
-                    y_columns = [st.selectbox(f'Select column for Y axis for Chart {i+1}:', df.columns)]
+                    y_column = st.selectbox(f'Select column for Y axis for Chart {i+1}:', df.columns)
+
+                    # Allow user to choose chart color
+                    color_palette = px.colors.qualitative.Alphabet
+                    color = st.selectbox(f'Select chart color for Chart {i+1}:', color_palette)
+                    
+                    # Create line chart using Plotly Graph Objects
+                    fig = go.Figure(go.Scatter(x=df[x_column], y=df[y_column], mode='lines', name=y_column, line=dict(color=color)))
+                
                 else:  # "Multiple Y-axes"
                     y_columns = st.multiselect(f'Select column(s) for Y axis for Chart {i+1}:', df.columns)
 
-            # Create a selectbox for the chart type
-            with cols[3]:
-                chart_type = st.selectbox(f'Select chart type for Chart {i+1}:', ['Line', 'Scatter', 'Area'])
-
-            # Create line chart using Plotly Graph Objects
-            fig = go.Figure()
-            color_palette = px.colors.qualitative.Alphabet
-            for j, y_column in enumerate(y_columns):
-                color = color_palette[j % len(color_palette)]
-                if chart_type == 'Scatter':
-                    fig.add_trace(go.Scatter(x=df[x_column], y=df[y_column], mode='markers', name=y_column, yaxis=f'y{j+1}', marker=dict(color=color)))
-                elif chart_type == 'Area':
-                    fig.add_trace(go.Scatter(x=df[x_column], y=df[y_column], mode='lines', fill='tozeroy', name=y_column, yaxis=f'y{j+1}', line=dict(color=color)))
-                else:
-                    fig.add_trace(go.Scatter(x=df[x_column], y=df[y_column], mode='lines', name=y_column, yaxis=f'y{j+1}', line=dict(color=color)))
+                    # Create line chart using Plotly Graph Objects
+                    fig = go.Figure()
+                    color_palette = px.colors.qualitative.Alphabet
+                    for j, y_column in enumerate(y_columns):
+                        color = color_palette[j % len(color_palette)]
+                        fig.add_trace(go.Scatter(x=df[x_column], y=df[y_column], mode='lines', name=y_column, yaxis=f'y{j+1}', line=dict(color=color)))
 
             # Update layout for multiple Y-axes
             if len(y_columns) > 1:
