@@ -33,7 +33,7 @@ if uploaded_file is not None:
         x_column = None
         for i in range(num_charts):
             st.subheader(f'Chart {i+1}')
-            cols = st.beta_columns(4)
+            cols = st.columns(4)
 
             # Create an input field for the chart name
             with cols[0]:
