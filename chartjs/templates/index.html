@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CSV Plotter</title>
+    {{ resources }}
+</head>
+<body>
+    <h2>Upload CSV and Plot</h2>
+    <form action="/" method="post" enctype="multipart/form-data">
+        <input type="file" name="file" accept=".csv" required><br>
+        X-axis: <input type="text" name="x_axis" required><br>
+        Y-axis: <input type="text" name="y_axis" required><br>
+        <input type="submit" value="Upload and Plot">
+    </form>
+    <hr>
+    {% if div %}
+        {{ script|safe }}
+        {{ div|safe }}
+    {% endif %}
+</body>
+</html>

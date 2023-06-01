@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CSV Plotter</title>
+</head>
+<body>
+    <h2>Select Axes</h2>
+    <form action="/plot" method="post">
+        X-axis: 
+        <select name="x_axis">
+            {% for column in columns %}
+            <option value="{{ column }}">{{ column }}</option>
+            {% endfor %}
+        </select><br>
+        Y-axis: 
+        <select name="y_axis">
+            {% for column in columns %}
+            <option value="{{ column }}">{{ column }}</option>
+            {% endfor %}
+        </select><br>
+        <input type="submit" value="Plot">
+    </form>
+</body>
+</html>

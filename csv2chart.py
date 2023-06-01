@@ -11,6 +11,10 @@ def load_data(file):
     df = pd.read_csv(file)
     return df
 
+# Define color palette and corresponding names
+color_palette = px.colors.qualitative.Alphabet
+color_names = ['Red', 'Green', 'Blue', 'Yellow', 'Purple', 'Orange', 'Cyan', 'Magenta', 'Lime', 'Pink', 'Teal', 'Lavender', 'Brown', 'Beige', 'Maroon', 'Mint', 'Olive', 'Apricot', 'Navy', 'Rose', 'Asphalt', 'Auburn', 'Cerulean', 'Daisy', 'Denim']
+
 # Create file uploader
 uploaded_file = st.file_uploader('Choose a CSV file', type='csv')
 
@@ -44,33 +48,38 @@ if uploaded_file is not None:
                 x_column = st.selectbox(f'Select column for X axis for Chart {i+1}:', df.columns, index=0 if x_column is None else df.columns.get_loc(x_column))
 
             # Create a selectbox or multiselect for the Y column(s)
-            y_columns = []
             with cols[2]:
                 if page == "Single Y-axis":
                     y_column = st.selectbox(f'Select column for Y axis for Chart {i+1}:', df.columns)
 
                     # Allow user to choose chart color
-                    color_palette = px.colors.qualitative.Alphabet
-                    color = st.selectbox(f'Select chart color for Chart {i+1}:', color_palette)
+                    color_name = st.selectbox(f'Select chart color for Chart {i+1}:', color_names)
+                    color = color_palette[color_names.index(color_name)]
 
                     # Create line chart using Plotly Graph Objects
                     fig = go.Figure(go.Scatter(x=df[x_column], y=df[y_column], mode='lines', name=y_column, line=dict(color=color)))
 
                 else:  # "Multiple Y-axes"
-                    y_columns = st.multiselect(f'Select column(s) for Y axis for Chart {i+1}:', df.columns)
+                    y_column1 = st.selectbox(f'Select column for first Y axis for Chart {i+1}:', df.columns)
+                    y_column2 = st.selectbox(f'Select column for second Y axis for Chart {i+1}:', df.columns)
+
+                    # Allow user to choose chart colors
+                    with cols[3]:
+                        color_name1 = st.selectbox(f'Select chart color for Y axis 1 for Chart {i+1}:', color_names)
+                        color1 = color_palette[color_names.index(color_name1)]
+                        color_name2 = st.selectbox(f'Select chart color for Y axis 2 for Chart {i+1}:', color_names)
+                        color2 = color_palette[color_names.index(color_name2)]
 
                     # Create line chart using Plotly Graph Objects
                     fig = go.Figure()
-                    color_palette = px.colors.qualitative.Alphabet
-                    for j, y_column in enumerate(y_columns):
-                        color = color_palette[j % len(color_palette)]
-                        fig.add_trace(go.Scatter(x=df[x_column], y=df[y_column], mode='lines', name=y_column, yaxis=f'y{j+1}', line=dict(color=color)))
+                    fig.add_trace(go.Scatter(x=df[x_column], y=df[y_column1], mode='lines', name=y_column1, yaxis='y1', line=dict(color=color1)))
+                    fig.add_trace(go.Scatter(x=df[x_column], y=df[y_column2], mode='lines', name=y_column2, yaxis='y2', line=dict(color=color2)))
 
             # Update layout for multiple Y-axes
-            if len(y_columns) > 1:
+            if page == "Multiple Y-axes":
                 fig.update_layout(
-                    yaxis=dict(title=y_columns[0]),
-                    yaxis2=dict(title=y_columns[1], overlaying='y', side='right')
+                    yaxis=dict(title=y_column1),
+                    yaxis2=dict(title=y_column2, overlaying='y', side='right')
                 )
 
             # Allow user to customize chart name
